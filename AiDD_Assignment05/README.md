@@ -41,6 +41,110 @@ AiDD_Assignment05/
 ### Prerequisites
 - Python 3.8 or higher
 - pip (Python package installer)
+- Docker (for containerized deployment)
+
+---
+
+## 🐳 Docker Deployment (Recommended)
+
+### Quick Start with Docker
+
+The application is containerized and ready to run with Docker.
+
+#### Option 1: Use Existing Running Container
+
+A Docker container is currently active and running:
+
+```
+Container ID: 098237f0f1a2
+Container Name: my-website
+Image: personal-website
+Status: Up and running
+Port Mapping: 0.0.0.0:8001->8001/tcp
+Access URL: http://localhost:8001
+```
+
+**Container Management Commands:**
+```bash
+# View container status
+docker ps
+
+# View container logs
+docker logs my-website
+# or
+docker logs 098237f0f1a2
+
+# Access container shell
+docker exec -it my-website /bin/bash
+
+# Stop container
+docker stop my-website
+
+# Start container (if stopped)
+docker start my-website
+
+# Restart container
+docker restart my-website
+
+# Remove container
+docker rm -f my-website
+```
+
+#### Option 2: Build and Run Fresh Docker Container
+
+**Step 1: Build Docker Image**
+```bash
+cd AiDD_Assignment05
+docker build -t personal-website .
+```
+
+**Step 2: Run Docker Container**
+```bash
+docker run -d -p 8001:8001 --name my-website personal-website
+```
+
+**Step 3: Verify Container is Running**
+```bash
+docker ps
+```
+
+**Step 4: Access the Application**
+Open your browser and navigate to: http://localhost:8001
+
+### Docker Configuration
+
+The `Dockerfile` includes:
+- Python 3.11 slim base image
+- Automatic dependency installation from requirements.txt
+- Port 8001 exposure
+- Flask application with all templates and static files
+- Environment variables configured for Flask
+
+### Docker Best Practices
+
+**Persistent Database with Volume (Optional):**
+```bash
+docker run -d -p 8001:8001 \
+  -v $(pwd)/projects.db:/app/projects.db \
+  --name my-website personal-website
+```
+
+**View Real-time Logs:**
+```bash
+docker logs -f my-website
+```
+
+**Rebuild After Code Changes:**
+```bash
+docker stop my-website
+docker rm my-website
+docker build -t personal-website .
+docker run -d -p 8001:8001 --name my-website personal-website
+```
+
+---
+
+## 💻 Local Development (Without Docker)
 
 ### Step 1: Install Dependencies
 
