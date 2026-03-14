@@ -1,13 +1,17 @@
 """Flask entrypoint for the recruiting-focused portfolio site."""
 
 import datetime
+import os
 
 from flask import Flask, redirect, render_template, url_for
 
 from content import SITE_CONTENT
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "your-secret-key-here-change-in-production"
+app.config["SECRET_KEY"] = os.environ.get(
+    "SECRET_KEY",
+    "local-development-secret-key-change-me",
+)
 
 
 def build_page(title, description, active_page, body_class):
@@ -141,4 +145,8 @@ def internal_server_error(error):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8001)
+    app.run(
+        debug=os.environ.get("FLASK_DEBUG", "").lower() in {"1", "true", "yes"},
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", "8001")),
+    )
