@@ -5,9 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ page_title or site.profile.name ~ ' | Portfolio' }}</title>
   <meta name="description" content="{{ page_description or site.profile.subheadline }}">
+  {% if page_url %}
+  <link rel="canonical" href="{{ page_url }}">
+  <meta property="og:url" content="{{ page_url }}">
+  {% endif %}
+  <meta property="og:type" content="website">
   <meta property="og:title" content="{{ page_title or site.profile.name ~ ' | Portfolio' }}">
   <meta property="og:description" content="{{ page_description or site.profile.subheadline }}">
-  <meta property="og:image" content="{{ url_for('static', filename='images/headshot.jpg') }}">
+  <meta property="og:image" content="{{ og_image_url }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ page_title or site.profile.name ~ ' | Portfolio' }}">
+  <meta name="twitter:description" content="{{ page_description or site.profile.subheadline }}">
+  <meta name="twitter:image" content="{{ og_image_url }}">
   <script>
     document.documentElement.classList.remove("no-js");
     document.documentElement.classList.add("js");

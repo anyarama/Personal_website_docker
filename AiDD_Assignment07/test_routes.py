@@ -17,11 +17,19 @@ class TestPublicRoutes:
         assert response.status_code == 200
         assert b"About the portfolio" in response.data
 
+    def test_about_route_with_trailing_slash(self, client):
+        response = client.get("/about/")
+        assert response.status_code == 200
+
     def test_resume_route(self, client):
         response = client.get("/resume")
         assert response.status_code == 200
         assert b"Resume-aligned view" in response.data
         assert b"Download PDF" in response.data
+
+    def test_resume_route_with_trailing_slash(self, client):
+        response = client.get("/resume/")
+        assert response.status_code == 200
 
     def test_portfolio_route(self, client):
         response = client.get("/projects")
@@ -31,12 +39,20 @@ class TestPublicRoutes:
         assert b"SLB Enterprise Data Engineering" in response.data
         assert b"Cloud Migration &amp; Multi-Cloud Integration Strategy" in response.data
 
+    def test_portfolio_route_with_trailing_slash(self, client):
+        response = client.get("/projects/")
+        assert response.status_code == 200
+
     def test_contact_route(self, client):
         response = client.get("/contact")
         assert response.status_code == 200
         assert b"Make the next step easy" in response.data
         assert b"LinkedIn" in response.data
         assert b"Resume" in response.data
+
+    def test_contact_route_with_trailing_slash(self, client):
+        response = client.get("/contact/")
+        assert response.status_code == 200
 
     def test_contact_route_post_not_allowed(self, client):
         response = client.post("/contact")
@@ -65,7 +81,7 @@ class TestRedirectsAndErrors:
     def test_thankyou_redirects_to_contact(self, client):
         response = client.get("/thankyou")
         assert response.status_code == 302
-        assert response.headers["Location"].endswith("/contact")
+        assert response.headers["Location"].endswith("/contact/")
 
     def test_404_handler(self, client):
         response = client.get("/missing-page")
@@ -85,6 +101,12 @@ class TestTemplateContent:
         response = client.get("/")
         assert b"Portfolio" in response.data
         assert b">Projects<" not in response.data
+
+    def test_generated_links_use_clean_trailing_slash_urls(self, client):
+        response = client.get("/")
+        assert b'href="/projects/"' in response.data
+        assert b'href="/about/"' in response.data
+        assert b'href="/contact/"' in response.data
 
     def test_resume_download_uses_pdf_asset(self, client):
         response = client.get("/resume")
@@ -106,3 +128,8 @@ class TestTemplateContent:
         response = client.get("/")
         assert b'<html lang="en" class="no-js">' in response.data
         assert b'classList.add("js")' in response.data
+
+    def test_layout_includes_canonical_metadata(self, client):
+        response = client.get("/projects/")
+        assert b'rel="canonical"' in response.data
+        assert b'content="http://localhost/projects/"' in response.data

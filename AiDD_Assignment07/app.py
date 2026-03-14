@@ -3,7 +3,7 @@
 import datetime
 import os
 
-from flask import Flask, redirect, render_template, url_for
+from flask import Flask, redirect, render_template, request, url_for
 
 from content import SITE_CONTENT
 
@@ -24,12 +24,28 @@ def build_page(title, description, active_page, body_class):
     }
 
 
+def get_site_origin():
+    """Return the configured public site URL, or fall back to the current request origin."""
+    configured_site_url = os.environ.get("SITE_URL", "").strip().rstrip("/")
+    if configured_site_url:
+        return configured_site_url
+    return request.url_root.rstrip("/")
+
+
 @app.context_processor
 def inject_globals():
     """Global template context used across the shared portfolio layout."""
+    site_origin = get_site_origin()
+    page_url = None
+    if request.endpoint:
+        page_url = f"{site_origin}{url_for(request.endpoint, **(request.view_args or {}))}"
+
     return {
         "current_year": datetime.datetime.now().year,
         "site": SITE_CONTENT,
+        "site_origin": site_origin,
+        "page_url": page_url,
+        "og_image_url": f"{site_origin}{url_for('static', filename='images/headshot.jpg')}",
         "resume_download_url": url_for("static", filename=SITE_CONTENT["profile"]["resume_asset"]),
     }
 
@@ -48,7 +64,8 @@ def index():
     )
 
 
-@app.route("/about")
+@app.route("/about", methods=["GET"])
+@app.route("/about/", methods=["GET"])
 def about():
     """About page with story, education, and credibility context."""
     return render_template(
@@ -62,7 +79,8 @@ def about():
     )
 
 
-@app.route("/resume")
+@app.route("/resume", methods=["GET"])
+@app.route("/resume/", methods=["GET"])
 def resume():
     """Resume-aligned summary page."""
     return render_template(
@@ -76,7 +94,8 @@ def resume():
     )
 
 
-@app.route("/projects")
+@app.route("/projects", methods=["GET"])
+@app.route("/projects/", methods=["GET"])
 def projects():
     """Read-only portfolio page."""
     return render_template(
@@ -90,7 +109,8 @@ def projects():
     )
 
 
-@app.route("/contact")
+@app.route("/contact", methods=["GET"])
+@app.route("/contact/", methods=["GET"])
 def contact():
     """Recruiter CTA page."""
     return render_template(
