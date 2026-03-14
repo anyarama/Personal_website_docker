@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="error-section">
+  <div class="container error-card card-showcase">
+    <p class="eyebrow">500</p>
+    <h1>The portfolio hit an unexpected issue.</h1>
+    <p class="hero-text">Please try again shortly, or reach out directly if you need the resume or portfolio materials right away.</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="{{ url_for('contact') }}">Contact</a>
+      <a class="button button-secondary" href="{{ url_for('index') }}">Back to Home</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="error-section">
+  <div class="container error-card card-showcase">
+    <p class="eyebrow">404</p>
+    <h1>That page is not in the portfolio.</h1>
+    <p class="hero-text">The link may be outdated, or the page may have moved during the portfolio refresh.</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="{{ url_for('index') }}">Back to Home</a>
+      <a class="button button-secondary" href="{{ url_for('projects') }}">View Portfolio</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

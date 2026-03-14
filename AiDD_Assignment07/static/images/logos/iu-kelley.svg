@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 120" role="img" aria-labelledby="title desc">
+  <title id="title">Indiana University Kelley School of Business logo</title>
+  <desc id="desc">Monochrome wordmark for Indiana University Kelley School of Business.</desc>
+  <g fill="#161616">
+    <text x="0" y="72" font-family="Georgia, 'Times New Roman', serif" font-size="66" font-weight="700" letter-spacing="-1.6">Kelley</text>
+    <text x="2" y="96" font-family="'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="4.8">INDIANA UNIVERSITY</text>
+    <rect x="248" y="28" width="2" height="62" rx="1" opacity="0.22"/>
+    <text x="278" y="58" font-family="'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="3.5">SCHOOL OF</text>
+    <text x="278" y="84" font-family="'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="3.5">BUSINESS</text>
+  </g>
+</svg>

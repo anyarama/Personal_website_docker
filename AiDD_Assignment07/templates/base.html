@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page_title or site.profile.name ~ ' | Portfolio' }}</title>
+  <meta name="description" content="{{ page_description or site.profile.subheadline }}">
+  <meta property="og:title" content="{{ page_title or site.profile.name ~ ' | Portfolio' }}">
+  <meta property="og:description" content="{{ page_description or site.profile.subheadline }}">
+  <meta property="og:image" content="{{ url_for('static', filename='images/headshot.jpg') }}">
+  <script>
+    document.documentElement.classList.remove("no-js");
+    document.documentElement.classList.add("js");
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='images/favicon.svg') }}" type="image/svg+xml">
+</head>
+<body class="{{ body_class|default('') }}">
+  <div class="site-shell">
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="site-logo" href="{{ url_for('index') }}">
+          <span class="site-logo-name">{{ site.profile.name }}</span>
+          <span class="site-logo-role">Portfolio</span>
+        </a>
+
+        <button id="navToggle" class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="primaryNav">
+          <span class="nav-toggle-line"></span>
+          <span class="nav-toggle-line"></span>
+        </button>
+
+        <nav class="site-nav" aria-label="Primary">
+          <ul id="primaryNav" class="nav-list">
+            {% for item in site.nav_items %}
+            <li>
+              <a href="{{ url_for(item.endpoint) }}" class="{% if active_page == item.endpoint %}is-active{% endif %}">
+                {{ item.label }}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div class="footer-copy">
+          <p class="footer-kicker">Built for recruiting conversations</p>
+          <h2 class="footer-title">Let’s talk about enterprise data platforms and analytics-ready systems.</h2>
+        </div>
+
+        <div class="footer-actions">
+          <a class="button button-primary footer-button-primary" href="mailto:{{ site.profile.email }}">Email Me</a>
+          <a class="button button-secondary footer-button-secondary" href="{{ site.profile.linkedin_url }}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a class="button button-secondary footer-button-secondary" href="{{ resume_download_url }}" target="_blank" rel="noopener noreferrer">Resume PDF</a>
+        </div>
+      </div>
+
+      <div class="container footer-meta">
+        <p>© {{ current_year }} {{ site.profile.name }}. Recruiting portfolio focused on enterprise data, digital systems, and AI readiness.</p>
+        <div class="footer-links">
+          <a href="{{ site.profile.github_profile_url }}" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="{{ site.profile.github_repo_url }}" target="_blank" rel="noopener noreferrer">Source</a>
+          <a href="{{ site.profile.linkedin_url }}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

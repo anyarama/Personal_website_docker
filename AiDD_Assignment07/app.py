@@ -1,106 +1,144 @@
-"""
-Personal Portfolio Website - Flask Application
-Author: Aneesh Yaramati
-Description: Data Engineering & Analytics Professional Portfolio
-"""
+"""Flask entrypoint for the recruiting-focused portfolio site."""
 
-from flask import Flask, render_template, request, redirect, url_for
 import datetime
-import DAL
+
+from flask import Flask, redirect, render_template, url_for
+
+from content import SITE_CONTENT
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "your-secret-key-here-change-in-production"
 
-# Initialize database on startup
-DAL.init_database()
 
-# Configuration
-app.config['SECRET_KEY'] = 'your-secret-key-here-change-in-production'
+def build_page(title, description, active_page, body_class):
+    """Shared page metadata passed to every public template."""
+    return {
+        "page_title": title,
+        "page_description": description,
+        "active_page": active_page,
+        "body_class": body_class,
+    }
 
-@app.route('/')
-def index():
-    """Home page"""
-    return render_template('index.html')
-
-@app.route('/about')
-def about():
-    """About page"""
-    return render_template('about.html')
-
-@app.route('/resume')
-def resume():
-    """Resume page"""
-    return render_template('resume.html')
-
-@app.route('/projects')
-def projects():
-    """Projects page - displays all projects from database"""
-    all_projects = DAL.get_all_projects()
-    return render_template('projects.html', projects=all_projects)
-
-@app.route('/add_project', methods=['GET', 'POST'])
-def add_project():
-    """Add new project page with form"""
-    if request.method == 'POST':
-        # Get form data
-        title = request.form.get('title')
-        description = request.form.get('description')
-        image_filename = request.form.get('image_filename')
-        
-        # Insert into database
-        if title and description and image_filename:
-            DAL.insert_project(title, description, image_filename)
-            return redirect(url_for('projects'))
-        
-    return render_template('add_project.html')
-
-@app.route('/delete_project/<int:project_id>', methods=['POST'])
-def delete_project(project_id):
-    """Delete a project by ID"""
-    DAL.delete_project(project_id)
-    return redirect(url_for('projects'))
-
-@app.route('/contact', methods=['GET', 'POST'])
-def contact():
-    """Contact page with form handling"""
-    if request.method == 'POST':
-        # Get form data
-        name = request.form.get('name')
-        email = request.form.get('email')
-        subject = request.form.get('subject')
-        message = request.form.get('message')
-        
-        # In a production app, you would:
-        # 1. Validate the data
-        # 2. Send email or save to database
-        # 3. Add CSRF protection
-        
-        # For now, redirect to thank you page
-        return redirect(url_for('thankyou'))
-    
-    return render_template('contact.html')
-
-@app.route('/thankyou')
-def thankyou():
-    """Thank you page after form submission"""
-    return render_template('thankyou.html')
 
 @app.context_processor
-def inject_year():
-    """Inject current year into all templates"""
-    return {'current_year': datetime.datetime.now().year}
+def inject_globals():
+    """Global template context used across the shared portfolio layout."""
+    return {
+        "current_year": datetime.datetime.now().year,
+        "site": SITE_CONTENT,
+        "resume_download_url": url_for("static", filename=SITE_CONTENT["profile"]["resume_asset"]),
+    }
+
+
+@app.route("/")
+def index():
+    """Portfolio landing page."""
+    return render_template(
+        "index.html",
+        **build_page(
+            "Aneesh Yaramati | Data Engineering Portfolio",
+            "Recruiting-focused portfolio for enterprise data engineering, digital systems, and analytics-ready architecture.",
+            "index",
+            "page-home",
+        ),
+    )
+
+
+@app.route("/about")
+def about():
+    """About page with story, education, and credibility context."""
+    return render_template(
+        "about.html",
+        **build_page(
+            "About | Aneesh Yaramati",
+            "Background, education, and portfolio context for Aneesh Yaramati.",
+            "about",
+            "page-about",
+        ),
+    )
+
+
+@app.route("/resume")
+def resume():
+    """Resume-aligned summary page."""
+    return render_template(
+        "resume.html",
+        **build_page(
+            "Resume | Aneesh Yaramati",
+            "Resume-driven overview of experience, education, projects, and technical skills.",
+            "resume",
+            "page-resume",
+        ),
+    )
+
+
+@app.route("/projects")
+def projects():
+    """Read-only portfolio page."""
+    return render_template(
+        "projects.html",
+        **build_page(
+            "Portfolio | Aneesh Yaramati",
+            "Selected enterprise data, digital systems, and applied AI case studies.",
+            "projects",
+            "page-projects",
+        ),
+    )
+
+
+@app.route("/contact")
+def contact():
+    """Recruiter CTA page."""
+    return render_template(
+        "contact.html",
+        **build_page(
+            "Contact | Aneesh Yaramati",
+            "Direct recruiter-friendly contact options including email, LinkedIn, and resume download.",
+            "contact",
+            "page-contact",
+        ),
+    )
+
+
+@app.route("/thankyou")
+def thankyou():
+    """Legacy thank-you route maintained as a redirect."""
+    return redirect(url_for("contact"))
+
 
 @app.errorhandler(404)
-def page_not_found(e):
-    """Custom 404 error page"""
-    return render_template('index.html'), 404
+def page_not_found(error):
+    """Custom 404 error page."""
+    return (
+        render_template(
+            "404.html",
+            **build_page(
+                "Page Not Found | Aneesh Yaramati",
+                "The page you requested could not be found.",
+                "",
+                "page-error",
+            ),
+        ),
+        404,
+    )
+
 
 @app.errorhandler(500)
-def internal_server_error(e):
-    """Custom 500 error page"""
-    return render_template('index.html'), 500
+def internal_server_error(error):
+    """Custom 500 error page."""
+    return (
+        render_template(
+            "500.html",
+            **build_page(
+                "Server Error | Aneesh Yaramati",
+                "The portfolio hit an unexpected issue.",
+                "",
+                "page-error",
+            ),
+        ),
+        500,
+    )
 
-if __name__ == '__main__':
-    # Development server configuration
-    # In production, use a proper WSGI server like Gunicorn
-    # Changed to port 8001 to avoid conflict with AirPlay Receiver on macOS
-    app.run(debug=True, host='0.0.0.0', port=8001)
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=8001)
